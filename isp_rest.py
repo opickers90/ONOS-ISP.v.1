@@ -1,7 +1,7 @@
 import urllib
 from urllib.parse import quote_plus
 from config import *
-from utility import get_json, del_json
+from isp_utility import get_json, del_json
 
 
 class HostManager:  # Get Host Information from HOST API ONOS

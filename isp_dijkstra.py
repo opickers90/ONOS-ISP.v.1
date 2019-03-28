@@ -1,7 +1,7 @@
 from collections import defaultdict
 from heapq import *
-from rest import LinkManager, IntentManager
-from utility import intent_p2p_install
+from isp_rest import LinkManager, IntentManager
+from isp_utility import intent_p2p_install
 
 
 # Dijkstra Shortest Path Algorithm

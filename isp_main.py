@@ -1,4 +1,4 @@
-from script import running_program
+from isp_script import running_program
 from time import sleep
 
 

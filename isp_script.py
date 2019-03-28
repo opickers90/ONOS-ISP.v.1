@@ -1,5 +1,5 @@
-from rest import HostManager, LinkManager
-from dijkstra import install_dijkstra_path, install_all_redundant_dijkstra_path
+from isp_rest import HostManager, LinkManager
+from isp_dijkstra import install_dijkstra_path, install_all_redundant_dijkstra_path
 from time import sleep
 import keyboard
 

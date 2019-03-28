@@ -1,0 +1,108 @@
+{
+    "links" : {
+    "of:0000000000000001/1-of:0000000000000002/1": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000002/3-of:0000000000000005/3": {
+      "basic": {
+        "bandwidth": 10,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000005/3-of:0000000000000002/3": {
+      "basic": {
+        "bandwidth": 10,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000002/4-of:0000000000000004/4": {
+      "basic": {
+        "bandwidth": 100,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000004/2-of:0000000000000005/2": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000003/1-of:0000000000000002/2": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000004/3-of:0000000000000001/3": {
+      "basic": {
+        "bandwidth": 10,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000005/2-of:0000000000000004/2": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000002/2-of:0000000000000003/1": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000005/1-of:0000000000000001/2": {
+      "basic": {
+        "bandwidth": 1,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000001/2-of:0000000000000005/1": {
+      "basic": {
+        "bandwidth": 1,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000002/1-of:0000000000000001/1": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000003/2-of:0000000000000004/1": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000001/3-of:0000000000000004/3": {
+      "basic": {
+        "bandwidth": 10,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000004/4-of:0000000000000002/4": {
+      "basic": {
+        "bandwidth": 100,
+        "type": "DIRECT"
+      }
+    },
+    "of:0000000000000004/1-of:0000000000000003/2": {
+      "basic": {
+        "bandwidth": 1000,
+        "type": "DIRECT"
+      }
+    }
+  },
+    "apps" : {
+        "org.onosproject.core" : {
+            "core" : {
+                "linkDiscoveryMode" : "STRICT"
+            }   
+        }
+    }
+}
+
