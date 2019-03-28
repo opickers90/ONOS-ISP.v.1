@@ -1,6 +1,6 @@
 from collections import defaultdict
 from heapq import *
-from restManager import LinkManager, IntentManager
+from rest import LinkManager, IntentManager
 from utility import intent_p2p_install
 
 

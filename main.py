@@ -1,4 +1,4 @@
-from IOManager import running_program
+from script import running_program
 from time import sleep
 
 
