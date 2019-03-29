@@ -126,16 +126,22 @@ def calculate_redundant_dijkstra_path(src, dst):
     redundant_de = []
     redundant_pi = []
     redundant_pe = []
+    new_redundant_dijkstra = []
 
     for edge in redundant_edge:
         path_dijkstra = dijkstra(edge, src, dst)
         redundant_dijkstra.append(path_dijkstra)
+
     redundant_dijkstra.sort()
-    for index in range(len(redundant_dijkstra)):
-        for n in range(len(redundant_dijkstra[index][1]) - 1):
+    for i in redundant_dijkstra:
+        if i not in new_redundant_dijkstra:
+            new_redundant_dijkstra.append(i)
+
+    for index in range(len(new_redundant_dijkstra)):
+        for n in range(len(new_redundant_dijkstra[index][1]) - 1):
             for o in range(len(edge_port)):
-                if (redundant_dijkstra[index][1][n] == edge_port[o][0][0] and
-                        redundant_dijkstra[index][1][n + 1] == edge_port[o][1][0]):
+                if (new_redundant_dijkstra[index][1][n] == edge_port[o][0][0] and
+                        new_redundant_dijkstra[index][1][n + 1] == edge_port[o][1][0]):
                     di_dijkstra.append(edge_port[o][0][0])
                     pi_dijkstra.append(edge_port[o][0][1])
                     de_dijkstra.append(edge_port[o][1][0])
@@ -154,7 +160,7 @@ def calculate_redundant_dijkstra_path(src, dst):
         redundant_de.append(de)
         redundant_pi.append(pi)
         redundant_pe.append(pe)
-    return (redundant_dijkstra, redundant_di_dijkstra, redundant_pi_dijkstra, redundant_de_dijkstra,
+    return (new_redundant_dijkstra, redundant_di_dijkstra, redundant_pi_dijkstra, redundant_de_dijkstra,
             redundant_pe_dijkstra, redundant_di, redundant_pi, redundant_de, redundant_pe)
 
 
@@ -193,7 +199,7 @@ def install_all_redundant_dijkstra_path(src, dst, priority):
     print("\nTotal Redundant Path: {total}\n".format(total=len(path_dijkstra)))
     for i in range(len(path_dijkstra)):
         path = " - ".join(path_dijkstra[i][1])
-        print("{no}: {path}".format(no=i+1, path=path))
+        print("{no}: {path}".format(no=i + 1, path=path))
         print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[i][0]))
     print("------------------------------------------------------------------------------------------")
     print("Installing All Redundant Dijkstra's Shortest Path...\n")
