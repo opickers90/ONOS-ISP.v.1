@@ -5,7 +5,7 @@ from mininet.cli import CLI
 from mininet.net import Mininet
 from mininet.node import OVSKernelSwitch, RemoteController
 from mininet.link import TCLink
-from config import *
+from isp_config import *
 
 
 class ExampleTestTopo(Topo):

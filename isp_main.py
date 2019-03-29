@@ -9,11 +9,11 @@ if __name__ == "__main__":
         print("Press 0 to QUIT\n")
         try:
             userInput = input("Enter Your Choice:")
-            if userInput == "1":
+            if userInput == "1":    # Running Program
                 running_program()
                 counter = 0
 
-            elif userInput == "0":
+            elif userInput == "0":  # Exit Program
                 sleep(1)
                 print("Exit Program...")
                 counter = 0

@@ -2,7 +2,7 @@ import requests
 import logging
 import json
 from requests.auth import HTTPBasicAuth
-from config import *
+from isp_config import *
 
 
 # For GET REST API

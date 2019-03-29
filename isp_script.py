@@ -3,7 +3,7 @@ from isp_dijkstra import install_best_dijkstra_path, install_best_redundant_dijk
 from time import sleep
 
 
-def running_program():
+def running_program():         # Running main program
     print("Retrieving Path Calculation using Dijkstra...")
     priority = 100
     topology_init = LinkManager()
@@ -25,7 +25,7 @@ def running_program():
         running_program()
 
 
-def input_host():
+def input_host():           # define source and destination
     hosts = HostManager()
     host_id, host_mac, host_ip, host_location = hosts.get_hosts()
     for n in range(len(host_id)):
@@ -56,7 +56,7 @@ def input_host():
     return src_input, dst_input
 
 
-def dijkstra_shortest_path(source, destination, priority):
+def dijkstra_shortest_path(source, destination, priority):  # calculate path from source and destination
     print("\nCalculate Dijkstra Shortest Path....")
     try:
         print("\n----------------------------------Dijkstra Primary Path-----------------------------------\n")

@@ -1,6 +1,6 @@
 import urllib
 from urllib.parse import quote_plus
-from config import *
+from isp_config import *
 from isp_utility import get_json, del_json
 
 
@@ -126,13 +126,10 @@ class LinkManager:  # Get Link Information from Link API ONOS
         return self.link_json, self.src_dev, self.src_port, self.dst_dev, self.dst_port, self.link_bw
 
 
-class IntentManager:  # Get Path Information from Intents API ONOS
+class IntentManager:  # Get Intents Information from Intents API ONOS
     def __init__(self, verbose=VERBOSE):
         assert isinstance(verbose, object)
         self.verbose = verbose
-        self.intent_app_id = []
-        self.intent_type = []
-        self.intent_path = []
         self.intent_json = sorted(get_json("http://{ip}:{port}/onos/v1/intents".format(ip=ONOS_IP, port=ONOS_PORT))[
                                       "intents"], key=lambda k: k["id"])
         self.intent_id = [self.intent_json[n]["id"] for n in range(len(self.intent_json)) if

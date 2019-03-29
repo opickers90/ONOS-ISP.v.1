@@ -4,8 +4,7 @@ from isp_rest import LinkManager, IntentManager
 from isp_utility import intent_p2p_install
 
 
-# Dijkstra Shortest Path Algorithm
-def dijkstra(edges, f, t):
+def dijkstra(edges, f, t):  # Dijkstra Shortest Path Algorithm
     g = defaultdict(list)
     for l, r, c in edges:
         g[l].append((c, r))
@@ -34,7 +33,7 @@ def dijkstra(edges, f, t):
     return float("inf")
 
 
-def generate_edge():
+def generate_edge():    # Generate Primary Topology
     link = LinkManager()
     link_json, src_dev, src_port, dst_dev, dst_port, link_bw = link.get_link()
     ref_bw = 100000000
@@ -46,7 +45,67 @@ def generate_edge():
     return edges, device_in, device_eg, edges_with_port
 
 
-def generate_redundant_edge(src, dst):
+def calculate_dijkstra_path(src, dst):  # Calculate Primary Best Path from Primary Topology
+    edge, dev_in, dev_eg, edge_port = generate_edge()
+    di_dijkstra = []
+    de_dijkstra = []
+    pi_dijkstra = []
+    pe_dijkstra = []
+    di = []
+    de = []
+    pi = []
+    pe = []
+
+    path_dijkstra = dijkstra(edge, src, dst)
+    for n in range(len(path_dijkstra[1]) - 1):
+        for o in range(len(edge_port)):
+            if (path_dijkstra[1][n] == edge_port[o][0][0] and path_dijkstra[1][n + 1] ==
+                    edge_port[o][1][0]):
+                di_dijkstra.append(edge_port[o][0][0])
+                pi_dijkstra.append(edge_port[o][0][1])
+                de_dijkstra.append(edge_port[o][1][0])
+                pe_dijkstra.append(edge_port[o][1][1])
+                if "of:" in edge_port[o][0][0]:
+                    de.append(edge_port[o][0][0])
+                    pe.append(edge_port[o][0][1])
+                if "of:" in edge_port[o][1][0]:
+                    di.append(edge_port[o][1][0])
+                    pi.append(edge_port[o][1][1])
+    return path_dijkstra, di_dijkstra, pi_dijkstra, de_dijkstra, pe_dijkstra, di, pi, de, pe
+
+
+def install_best_dijkstra_path(src, dst, priority):  # Primary Path Intent Installation
+    path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_dijkstra_path(src, dst)
+    path = " - ".join(path_dijkstra[1])
+    print("Dijkstra's Shortest Path Calculation Result: \n")
+    print(path)
+    print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[0]))
+    print("------------------------------------------------------------------------------------------")
+    print("Installing Best-Path Dijkstra's Shortest Path..\n")
+    intent = IntentManager()
+    intent.del_intent()
+
+    # Install Forwarding Intent
+    print("Forwarding Intents based on Path Information")
+    if len(di) == len(de):
+        for n in range(len(de)):
+            response = intent_p2p_install(pi[n], di[n], pe[n], de[n], priority)
+            print("{no}.  Ingress = {di}:{pi} <--->  Egress = {de}:{pe} : status {stt}".format(no=n + 1, di=di[n],
+                                                                                               pi=pi[n], de=de[n],
+                                                                                               pe=pe[n],
+                                                                                               stt=response))
+    # Install Reverse Forwarding Intent
+    print("Reverse/Backwarding Intents based on Path Information")
+    if len(di) == len(de):
+        for n in range(len(de)):
+            response = intent_p2p_install(pe[n], de[n], pi[n], di[n], priority)
+            print("{no}.  Ingress = {de}:{pe} <--->  Egress = {di}:{pi} : status {stt}".format(no=n + 1, di=di[n],
+                                                                                               pi=pi[n],
+                                                                                               de=de[n], pe=pe[n],
+                                                                                               stt=response))
+
+
+def generate_redundant_edge(src, dst):  # Generate redundant Topology
     edges, dev_in, dev_eg, edge_port = generate_edge()
     path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_dijkstra_path(src, dst)
     delete_edge = []
@@ -77,36 +136,7 @@ def generate_redundant_edge(src, dst):
     return redundant_edges, edge_port
 
 
-def calculate_dijkstra_path(src, dst):
-    edge, dev_in, dev_eg, edge_port = generate_edge()
-    di_dijkstra = []
-    de_dijkstra = []
-    pi_dijkstra = []
-    pe_dijkstra = []
-    di = []
-    de = []
-    pi = []
-    pe = []
-
-    path_dijkstra = dijkstra(edge, src, dst)
-    for n in range(len(path_dijkstra[1]) - 1):
-        for o in range(len(edge_port)):
-            if (path_dijkstra[1][n] == edge_port[o][0][0] and path_dijkstra[1][n + 1] ==
-                    edge_port[o][1][0]):
-                di_dijkstra.append(edge_port[o][0][0])
-                pi_dijkstra.append(edge_port[o][0][1])
-                de_dijkstra.append(edge_port[o][1][0])
-                pe_dijkstra.append(edge_port[o][1][1])
-                if "of:" in edge_port[o][0][0]:
-                    de.append(edge_port[o][0][0])
-                    pe.append(edge_port[o][0][1])
-                if "of:" in edge_port[o][1][0]:
-                    di.append(edge_port[o][1][0])
-                    pi.append(edge_port[o][1][1])
-    return path_dijkstra, di_dijkstra, pi_dijkstra, de_dijkstra, pe_dijkstra, di, pi, de, pe
-
-
-def calculate_redundant_dijkstra_path(src, dst):
+def calculate_redundant_dijkstra_path(src, dst):  # Calculate All Redundant Path
     redundant_edge, edge_port = generate_redundant_edge(src, dst)
     di_dijkstra = []
     de_dijkstra = []
@@ -164,36 +194,7 @@ def calculate_redundant_dijkstra_path(src, dst):
             redundant_pe_dijkstra, redundant_di, redundant_pi, redundant_de, redundant_pe)
 
 
-def install_best_dijkstra_path(src, dst, priority):
-    path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_dijkstra_path(src, dst)
-    path = " - ".join(path_dijkstra[1])
-    print("Dijkstra's Shortest Path Calculation Result: \n")
-    print(path)
-    print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[0]))
-    print("------------------------------------------------------------------------------------------")
-    print("Installing Best-Path Dijkstra's Shortest Path..\n")
-    intent = IntentManager()
-    intent.del_intent()
-    print("Forwarding Intents based on Path Information")
-    if len(di) == len(de):
-        for n in range(len(de)):
-            response = intent_p2p_install(pi[n], di[n], pe[n], de[n], priority)
-            print("{no}.  Ingress = {di}:{pi} <--->  Egress = {de}:{pe} : status {stt}".format(no=n + 1, di=di[n],
-                                                                                               pi=pi[n], de=de[n],
-                                                                                               pe=pe[n],
-                                                                                               stt=response))
-    # Install Reverse Forwarding Intent based on Path Information
-    print("Reverse/Backwarding Intents based on Path Information")
-    if len(di) == len(de):
-        for n in range(len(de)):
-            response = intent_p2p_install(pe[n], de[n], pi[n], di[n], priority)
-            print("{no}.  Ingress = {de}:{pe} <--->  Egress = {di}:{pi} : status {stt}".format(no=n + 1, di=di[n],
-                                                                                               pi=pi[n],
-                                                                                               de=de[n], pe=pe[n],
-                                                                                               stt=response))
-
-
-def install_best_redundant_dijkstra_path(src, dst, priority):
+def install_best_redundant_dijkstra_path(src, dst, priority):  # Best Redundant Path Intent Installation
     path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_redundant_dijkstra_path(src, dst)
     print("Dijkstra's Shortest Path Calculation Result: \n")
     print("\nTotal Redundant Path: {total}\n".format(total=len(path_dijkstra)))
@@ -203,9 +204,11 @@ def install_best_redundant_dijkstra_path(src, dst, priority):
         print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[i][0]))
     print("------------------------------------------------------------------------------------------")
     print("Installing Best-Path Redundant Dijkstra's Shortest Path...\n")
+
+    # Install Forwarding Intent
     print("Forwarding Intents based on Path Information")
     if len(di[0]) == len(de[0]):
-        for n in range(len(path_dijkstra[0][1])-2):
+        for n in range(len(path_dijkstra[0][1]) - 2):
             response = intent_p2p_install(pi[0][n], di[0][n], pe[0][n], de[0][n], priority)
             print(
                 "{no}.  Ingress = {di}:{pi} <--->  Egress = {de}:{pe} : status {stt}".format(no=n + 1, di=di[0][n],
@@ -213,11 +216,11 @@ def install_best_redundant_dijkstra_path(src, dst, priority):
                                                                                              de=de[0][n],
                                                                                              pe=pe[0][n],
                                                                                              stt=response))
-    # Install Reverse Forwarding Intent based on Path Information
+    # Install Reverse Forwarding Intent
     print("\n")
     print("Reverse/Backwarding Intents based on Path Information")
     if len(di[0]) == len(de[0]):
-        for n in range(len(path_dijkstra[0][1])-2):
+        for n in range(len(path_dijkstra[0][1]) - 2):
             response = intent_p2p_install(pe[0][n], de[0][n], pi[0][n], di[0][n], priority)
             print(
                 "{no}.  Ingress = {de}:{pe} <--->  Egress = {di}:{pi} : status {stt}".format(no=n + 1, di=di[0][n],
