@@ -164,14 +164,14 @@ def calculate_redundant_dijkstra_path(src, dst):
             redundant_pe_dijkstra, redundant_di, redundant_pi, redundant_de, redundant_pe)
 
 
-def install_dijkstra_path(src, dst, priority):
+def install_best_dijkstra_path(src, dst, priority):
     path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_dijkstra_path(src, dst)
     path = " - ".join(path_dijkstra[1])
     print("Dijkstra's Shortest Path Calculation Result: \n")
     print(path)
     print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[0]))
     print("------------------------------------------------------------------------------------------")
-    print("Installing Dijkstra's Shortest Path..\n")
+    print("Installing Best-Path Dijkstra's Shortest Path..\n")
     intent = IntentManager()
     intent.del_intent()
     print("Forwarding Intents based on Path Information")
@@ -193,7 +193,7 @@ def install_dijkstra_path(src, dst, priority):
                                                                                                stt=response))
 
 
-def install_all_redundant_dijkstra_path(src, dst, priority):
+def install_best_redundant_dijkstra_path(src, dst, priority):
     path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_redundant_dijkstra_path(src, dst)
     print("Dijkstra's Shortest Path Calculation Result: \n")
     print("\nTotal Redundant Path: {total}\n".format(total=len(path_dijkstra)))
@@ -202,10 +202,10 @@ def install_all_redundant_dijkstra_path(src, dst, priority):
         print("{no}: {path}".format(no=i + 1, path=path))
         print("Total Cost for this path: {cost}\n".format(cost=path_dijkstra[i][0]))
     print("------------------------------------------------------------------------------------------")
-    print("Installing All Redundant Dijkstra's Shortest Path...\n")
+    print("Installing Best-Path Redundant Dijkstra's Shortest Path...\n")
     print("Forwarding Intents based on Path Information")
     if len(di[0]) == len(de[0]):
-        for n in range(len(de[0])):
+        for n in range(len(path_dijkstra[0][1])-2):
             response = intent_p2p_install(pi[0][n], di[0][n], pe[0][n], de[0][n], priority)
             print(
                 "{no}.  Ingress = {di}:{pi} <--->  Egress = {de}:{pe} : status {stt}".format(no=n + 1, di=di[0][n],
@@ -217,7 +217,7 @@ def install_all_redundant_dijkstra_path(src, dst, priority):
     print("\n")
     print("Reverse/Backwarding Intents based on Path Information")
     if len(di[0]) == len(de[0]):
-        for n in range(len(de[0])):
+        for n in range(len(path_dijkstra[0][1])-2):
             response = intent_p2p_install(pe[0][n], de[0][n], pi[0][n], di[0][n], priority)
             print(
                 "{no}.  Ingress = {de}:{pe} <--->  Egress = {di}:{pi} : status {stt}".format(no=n + 1, di=di[0][n],

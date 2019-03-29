@@ -1,5 +1,5 @@
 from isp_rest import HostManager, LinkManager
-from isp_dijkstra import install_dijkstra_path, install_all_redundant_dijkstra_path
+from isp_dijkstra import install_best_dijkstra_path, install_best_redundant_dijkstra_path
 from time import sleep
 import keyboard
 
@@ -63,10 +63,10 @@ def dijkstra_shortest_path(source, destination, priority):
     print("\nCalculate Dijkstra Shortest Path....")
     try:
         print("\n----------------------------------Dijkstra Primary Path-----------------------------------\n")
-        install_dijkstra_path(source, destination, priority)
+        install_best_dijkstra_path(source, destination, priority)
         sleep(1)
         print("\n----------------------------------Dijkstra Secondary Path-----------------------------------\n")
-        install_all_redundant_dijkstra_path(source, destination, priority - 10)
+        install_best_redundant_dijkstra_path(source, destination, priority - 10)
         sleep(1)
     except TypeError:
         print("\nNo Path Found")
