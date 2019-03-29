@@ -1,7 +1,6 @@
 from isp_rest import HostManager, LinkManager
 from isp_dijkstra import install_best_dijkstra_path, install_best_redundant_dijkstra_path
 from time import sleep
-import keyboard
 
 
 def running_program():
@@ -11,21 +10,19 @@ def running_program():
     link_1_json, src_1_dev, src_1_port, dst_1_dev, dst_1_port, link_1_bw = topology_init.get_link()
     src, dst = input_host()
     dijkstra_shortest_path(src, dst, priority)
-    while True:
-        topology_after = LinkManager()
-        link_2_json, src_2_dev, src_2_port, dst_2_dev, dst_2_port, link_2_bw = topology_after.get_link()
-        if link_2_json == link_1_json:
-            print("Press C to change host and destination")
-            if keyboard.is_pressed('C') or keyboard.is_pressed('c'):
-                print("You Press C for change host and destination")
-                running_program()
+    try:
+        while True:
+            topology_after = LinkManager()
+            link_2_json, src_2_dev, src_2_port, dst_2_dev, dst_2_port, link_2_bw = topology_after.get_link()
+            if link_2_json == link_1_json:
+                print("Dijkstra Success... Press (Ctrl + C) for exit")
             else:
+                print("updating path calculation...")
+                dijkstra_shortest_path(src, dst, priority)
+                link_1_json = link_2_json
                 continue
-        else:
-            print("updating path calculation...")
-            dijkstra_shortest_path(src, dst, priority)
-            link_1_json = link_2_json
-            continue
+    except KeyboardInterrupt:
+        running_program()
 
 
 def input_host():

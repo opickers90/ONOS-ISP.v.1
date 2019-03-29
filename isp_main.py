@@ -11,6 +11,7 @@ if __name__ == "__main__":
             userInput = input("Enter Your Choice:")
             if userInput == "1":
                 running_program()
+                counter = 0
 
             elif userInput == "0":
                 sleep(1)
