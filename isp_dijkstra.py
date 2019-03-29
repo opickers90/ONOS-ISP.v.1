@@ -129,10 +129,13 @@ def calculate_redundant_dijkstra_path(src, dst):
 
     for edge in redundant_edge:
         path_dijkstra = dijkstra(edge, src, dst)
-        for n in range(len(path_dijkstra[1]) - 1):
+        redundant_dijkstra.append(path_dijkstra)
+    redundant_dijkstra.sort()
+    for index in range(len(redundant_dijkstra)):
+        for n in range(len(redundant_dijkstra[index][1]) - 1):
             for o in range(len(edge_port)):
-                if (path_dijkstra[1][n] == edge_port[o][0][0] and path_dijkstra[1][n + 1] ==
-                        edge_port[o][1][0]):
+                if (redundant_dijkstra[index][1][n] == edge_port[o][0][0] and
+                        redundant_dijkstra[index][1][n + 1] == edge_port[o][1][0]):
                     di_dijkstra.append(edge_port[o][0][0])
                     pi_dijkstra.append(edge_port[o][0][1])
                     de_dijkstra.append(edge_port[o][1][0])
@@ -143,7 +146,6 @@ def calculate_redundant_dijkstra_path(src, dst):
                     if "of:" in edge_port[o][1][0]:
                         di.append(edge_port[o][1][0])
                         pi.append(edge_port[o][1][1])
-        redundant_dijkstra.append(path_dijkstra)
         redundant_di_dijkstra.append(di_dijkstra)
         redundant_de_dijkstra.append(de_dijkstra)
         redundant_pi_dijkstra.append(pi_dijkstra)
@@ -152,7 +154,6 @@ def calculate_redundant_dijkstra_path(src, dst):
         redundant_de.append(de)
         redundant_pi.append(pi)
         redundant_pe.append(pe)
-
     return (redundant_dijkstra, redundant_di_dijkstra, redundant_pi_dijkstra, redundant_de_dijkstra,
             redundant_pe_dijkstra, redundant_di, redundant_pi, redundant_de, redundant_pe)
 
@@ -184,38 +185,6 @@ def install_dijkstra_path(src, dst, priority):
                                                                                                pi=pi[n],
                                                                                                de=de[n], pe=pe[n],
                                                                                                stt=response))
-
-
-def install_best_redundant_dijkstra_path(src, dst, priority):
-    path_dijkstra, dij, pij, dej, pej, di, pi, de, pe = calculate_redundant_dijkstra_path(src, dst)
-    path_dijkstra_sorted = sorted(path_dijkstra)
-    path = " - ".join(path_dijkstra_sorted[0][1])
-    print("Dijkstra's Shortest Path Calculation Result: \n")
-    print(path)
-    print("------------------------------------------------------------------------------------------")
-    print("Installing Redundant Dijkstra's Shortest Path...\n")
-    print("Forwarding Intents based on Path Information")
-    if len(di[0]) == len(de[0]):
-        for n in range(len(de[0])):
-            response = intent_p2p_install(pi[0][n], di[0][n], pe[0][n], de[0][n], priority)
-            print(
-                "{no}.  Ingress = {di}:{pi} <--->  Egress = {de}:{pe} : status {stt}".format(no=n + 1, di=di[0][n],
-                                                                                             pi=pi[0][n],
-                                                                                             de=de[0][n],
-                                                                                             pe=pe[0][n],
-                                                                                             stt=response))
-    # Install Reverse Forwarding Intent based on Path Information
-    print("\n")
-    print("Reverse/Backwarding Intents based on Path Information")
-    if len(di[0]) == len(de[0]):
-        for n in range(len(de[0])):
-            response = intent_p2p_install(pe[0][n], de[0][n], pi[0][n], di[0][n], priority)
-            print(
-                "{no}.  Ingress = {de}:{pe} <--->  Egress = {di}:{pi} : status {stt}".format(no=n + 1, di=di[0][n],
-                                                                                             pi=pi[0][n],
-                                                                                             de=de[0][n],
-                                                                                             pe=pe[0][n],
-                                                                                             stt=response))
 
 
 def install_all_redundant_dijkstra_path(src, dst, priority):
