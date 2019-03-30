@@ -41,7 +41,7 @@ sudo python topo-simple.py
 
 After simple Mininet topology created, configure link bandwitdh:
 ```
-curl --user onos:rocks -X POST -H "Content-Type: application/json" http://localhost:8181/onos/v1/network/configuration/ -d ~/topo-simple-netcfg.json
+curl --user onos:rocks -X POST -H "Content-Type: application/json" http://localhost:8181/onos/v1/network/configuration/ -d ~/ONOS-ISP.v.1/topo-simple-netcfg.json
 ```
 
 Test pingall to make sure the Host already discovered:
