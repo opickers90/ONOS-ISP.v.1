@@ -4,31 +4,31 @@ from isp_rest import LinkManager, IntentManager
 from isp_utility import intent_p2p_install
 
 
-def dijkstra(edges, f, t):  # Dijkstra Shortest Path Algorithm
-    g = defaultdict(list)
-    for l, r, c in edges:
-        g[l].append((c, r))
+def dijkstra(edges, source, destination):  # Dijkstra Shortest Path Algorithm
+    graph = defaultdict(list)
+    for node_src, node_dst, bw in edges:
+        graph[node_src].append((bw, node_dst))
 
     # dist records the min value of each node in heap.
-    q, seen, dist = [(0, f, ())], set(), {f: 0}
-    while q:
-        (cost, v1, path) = heappop(q)
-        if v1 in seen:
+    queue, seen, dist = [(0, source, ())], set(), {source: 0}
+    while queue:
+        (cost, vertex1, path) = heappop(queue)
+        if vertex1 in seen:
             continue
 
-        seen.add(v1)
-        path += (v1,)
-        if v1 == t:
+        seen.add(vertex1)
+        path += (vertex1,)
+        if vertex1 == destination:
             return cost, path
 
-        for c, v2 in g.get(v1, ()):
-            if v2 in seen:
+        for bw, vertex2 in graph.get(vertex1, ()):
+            if vertex2 in seen:
                 continue
 
             # Not every edge will be calculated. The edge which can improve the value of node in heap will be useful.
-            if v2 not in dist or cost + c < dist[v2]:
-                dist[v2] = cost + c
-                heappush(q, (cost + c, v2, path))
+            if vertex2 not in dist or cost + bw < dist[vertex2]:
+                dist[vertex2] = cost + bw
+                heappush(queue, (cost + bw, vertex2, path))
 
     return float("inf")
 
