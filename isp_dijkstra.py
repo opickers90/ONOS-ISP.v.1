@@ -10,7 +10,7 @@ def dijkstra(edges, source, destination):  # Dijkstra Shortest Path Algorithm
         graph[node_src].append((bw, node_dst))
 
     # dist records the min value of each node in heap.
-    queue, seen, dist = [(0, source, ())], set(), {source: 0}
+    queue, seen, distance = [(0, source, ())], set(), {source: 0}
     while queue:
         (cost, vertex1, path) = heappop(queue)
         if vertex1 in seen:
@@ -26,9 +26,9 @@ def dijkstra(edges, source, destination):  # Dijkstra Shortest Path Algorithm
                 continue
 
             # Not every edge will be calculated. The edge which can improve the value of node in heap will be useful.
-            if vertex2 not in dist or cost + bw < dist[vertex2]:
-                dist[vertex2] = cost + bw
-                heappush(queue, (dist[vertex2], vertex2, path))
+            if vertex2 not in distance or cost + bw < distance[vertex2]:
+                distance[vertex2] = cost + bw
+                heappush(queue, (distance[vertex2], vertex2, path))
 
     return float("inf")
 
