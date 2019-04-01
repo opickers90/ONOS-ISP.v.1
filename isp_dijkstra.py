@@ -28,7 +28,7 @@ def dijkstra(edges, source, destination):  # Dijkstra Shortest Path Algorithm
             # Not every edge will be calculated. The edge which can improve the value of node in heap will be useful.
             if vertex2 not in dist or cost + bw < dist[vertex2]:
                 dist[vertex2] = cost + bw
-                heappush(queue, (cost + bw, vertex2, path))
+                heappush(queue, (dist[vertex2], vertex2, path))
 
     return float("inf")
 
